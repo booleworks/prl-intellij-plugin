@@ -5,12 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface FeatureRestriction extends PsiElement {
+public interface FeatureVersionRestriction extends PsiElement {
 
   @Nullable
-  PosNegNumber getPosNegNumber();
-
-  @Nullable
-  QuotedString getQuotedString();
+  Num getNum();
 
 }

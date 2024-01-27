@@ -40,4 +40,10 @@ public class ForbiddenFeatureRuleImpl extends PrlASTWrapperPsiElement implements
     return findChildByClass(FeatureRestriction.class);
   }
 
+  @Override
+  @Nullable
+  public FeatureVersionRestriction getFeatureVersionRestriction() {
+    return findChildByClass(FeatureVersionRestriction.class);
+  }
+
 }

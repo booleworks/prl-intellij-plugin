@@ -529,23 +529,35 @@ public class PrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // LSQB EQ num RSQB | EQ (posNegNumber | quotedString)
+  // EQ (posNegNumber | quotedString)
   public static boolean featureRestriction(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "featureRestriction")) return false;
-    if (!nextTokenIs(b, "<feature restriction>", EQ, LSQB)) return false;
+    if (!nextTokenIs(b, EQ)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, FEATURE_RESTRICTION, null);
+    r = consumeToken(b, EQ);
+    p = r; // pin = 1
+    r = r && featureRestriction_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // posNegNumber | quotedString
+  private static boolean featureRestriction_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "featureRestriction_1")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, FEATURE_RESTRICTION, "<feature restriction>");
-    r = featureRestriction_0(b, l + 1);
-    if (!r) r = featureRestriction_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    r = posNegNumber(b, l + 1);
+    if (!r) r = quotedString(b, l + 1);
     return r;
   }
 
+  /* ********************************************************** */
   // LSQB EQ num RSQB
-  private static boolean featureRestriction_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "featureRestriction_0")) return false;
+  public static boolean featureVersionRestriction(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "featureVersionRestriction")) return false;
+    if (!nextTokenIs(b, LSQB)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
+    Marker m = enter_section_(b, l, _NONE_, FEATURE_VERSION_RESTRICTION, null);
     r = consumeTokens(b, 1, LSQB, EQ);
     p = r; // pin = 1
     r = r && report_error_(b, num(b, l + 1));
@@ -554,29 +566,8 @@ public class PrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // EQ (posNegNumber | quotedString)
-  private static boolean featureRestriction_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "featureRestriction_1")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, EQ);
-    p = r; // pin = 1
-    r = r && featureRestriction_1_1(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // posNegNumber | quotedString
-  private static boolean featureRestriction_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "featureRestriction_1_1")) return false;
-    boolean r;
-    r = posNegNumber(b, l + 1);
-    if (!r) r = quotedString(b, l + 1);
-    return r;
-  }
-
   /* ********************************************************** */
-  // FORBIDDEN FEAT featureRef featureRestriction?
+  // FORBIDDEN FEAT featureRef (featureRestriction | featureVersionRestriction)?
   public static boolean forbiddenFeatureRule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "forbiddenFeatureRule")) return false;
     if (!nextTokenIs(b, FORBIDDEN)) return false;
@@ -590,11 +581,20 @@ public class PrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // featureRestriction?
+  // (featureRestriction | featureVersionRestriction)?
   private static boolean forbiddenFeatureRule_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "forbiddenFeatureRule_3")) return false;
-    featureRestriction(b, l + 1);
+    forbiddenFeatureRule_3_0(b, l + 1);
     return true;
+  }
+
+  // featureRestriction | featureVersionRestriction
+  private static boolean forbiddenFeatureRule_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forbiddenFeatureRule_3_0")) return false;
+    boolean r;
+    r = featureRestriction(b, l + 1);
+    if (!r) r = featureVersionRestriction(b, l + 1);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1043,7 +1043,7 @@ public class PrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // MANDATORY FEAT featureRef featureRestriction?
+  // MANDATORY FEAT featureRef (featureRestriction | featureVersionRestriction)?
   public static boolean mandatoryFeatureRule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mandatoryFeatureRule")) return false;
     if (!nextTokenIs(b, MANDATORY)) return false;
@@ -1057,11 +1057,20 @@ public class PrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // featureRestriction?
+  // (featureRestriction | featureVersionRestriction)?
   private static boolean mandatoryFeatureRule_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mandatoryFeatureRule_3")) return false;
-    featureRestriction(b, l + 1);
+    mandatoryFeatureRule_3_0(b, l + 1);
     return true;
+  }
+
+  // featureRestriction | featureVersionRestriction
+  private static boolean mandatoryFeatureRule_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mandatoryFeatureRule_3_0")) return false;
+    boolean r;
+    r = featureRestriction(b, l + 1);
+    if (!r) r = featureVersionRestriction(b, l + 1);
+    return r;
   }
 
   /* ********************************************************** */

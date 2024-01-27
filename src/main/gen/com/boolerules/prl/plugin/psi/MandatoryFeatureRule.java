@@ -13,4 +13,7 @@ public interface MandatoryFeatureRule extends PsiElement {
   @Nullable
   FeatureRestriction getFeatureRestriction();
 
+  @Nullable
+  FeatureVersionRestriction getFeatureVersionRestriction();
+
 }

@@ -1,6 +1,7 @@
 package com.boolerules.prl.plugin
 
 import com.boolerules.prl.plugin.language.PrlLanguage
+import com.boolerules.prl.plugin.psi.PrlTokenSets
 import com.boolerules.prl.plugin.psi.PrlTypes
 import com.boolerules.prl.plugin.psi.PrlTypes.FEATURE_BODY_CONTENT
 import com.boolerules.prl.plugin.psi.PrlTypes.FEATURE_DEFINITION
@@ -12,6 +13,7 @@ import com.boolerules.prl.plugin.psi.PrlTypes.MODULE_DEFINITION
 import com.boolerules.prl.plugin.psi.PrlTypes.RULE_BODY_CONTENT
 import com.boolerules.prl.plugin.psi.PrlTypes.RULE_DEF
 import com.boolerules.prl.plugin.psi.PrlTypes.RULE_FILE
+import com.boolerules.prl.plugin.psi.PrlTypes.SIMP
 import com.boolerules.prl.plugin.psi.PrlTypes.SLICING_PROPERTIES
 import com.boolerules.prl.plugin.psi.PrlTypes.SLICING_PROPERTY_DEFINITION
 import com.intellij.application.options.CodeStyleAbstractConfigurable
@@ -64,9 +66,11 @@ class PrlBlock(
             RULE_FILE, HEADER_DEF, SLICING_PROPERTIES, MODULE_DEFINITION -> Indent.getAbsoluteNoneIndent()
             HEADER_CONTENT, SLICING_PROPERTY_DEFINITION, IMPORT_DEF,
             FEATURE_DEFINITION, GROUP_DEFINITION,
-            RULE_DEF, FEATURE_BODY_CONTENT, RULE_BODY_CONTENT            -> Indent.getNormalIndent()
+            RULE_DEF, FEATURE_BODY_CONTENT, RULE_BODY_CONTENT -> Indent.getNormalIndent()
 
-            else                                                         -> Indent.getNoneIndent()
+            SIMP -> Indent.getContinuationIndent()
+
+            else -> Indent.getNoneIndent()
         }
     }
 
@@ -100,14 +104,31 @@ class PrlBlock(
 
 }
 
+// TODO would be cleaner if we had specific block types instead of just the dummy-block PrlBlock
 fun prlSpacingBuilder(prlCodeStyleSettings: PrlCodeStyleSettings): SpacingBuilder =
     SpacingBuilder(prlCodeStyleSettings.container, PrlLanguage)
         .before(PrlTypes.COMMA).spacing(0, 0, 0, false, 0)
         .after(PrlTypes.COMMA).spacing(1, 1, 0, true, 0)
 
-        .before(PrlTypes.NOT_MINUS).spacing(0, 1, 0, false, 0)
-        .after(PrlTypes.NOT_MINUS).spacing(0, 1, 0, false, 0)
+        .afterInside(PrlTypes.NOT_MINUS, TokenSet.create(PrlTypes.POS_NEG_NUMBER, PrlTypes.INT_MUL, PrlTypes.LIT)).spacing(0, 0, 0, false, 0)
+        .before(PrlTypes.NOT_MINUS).spacing(1, 1, 0, false, 0)
+        .after(PrlTypes.NOT_MINUS).spacing(1, 1, 0, false, 0)
 
+        .before(PrlTypes.ADD).spacing(1, 1, 0, false, 0)
+        .after(PrlTypes.ADD).spacing(1, 1, 0, false, 0)
+
+        .before(PrlTypes.MUL).spacing(0, 0, 0, false, 0)
+        .after(PrlTypes.MUL).spacing(0, 0, 0, false, 0)
+
+        .beforeInside(PrlTypes.EQ, PrlTypes.FEATURE_VERSION_RESTRICTION).spacing(0, 0, 0, false, 0)
+        .afterInside(PrlTypes.EQ, PrlTypes.FEATURE_VERSION_RESTRICTION).spacing(0, 0, 0, false, 0)
+        .around(PrlTypes.COMPARATOR).spacing(1, 1, 0, false, 0)
+
+        .before(PrlTypes.FEATURE_RESTRICTION).spacing(1, 1, 0, false, 0)
+        .afterInside(PrlTypes.EQ, PrlTypes.FEATURE_RESTRICTION).spacing(1, 1, 0, false, 0)
+
+        .withinPairInside(PrlTypes.ID, PrlTypes.LSQB, PrlTypes.VERSION_PREDICATE).spacing(0, 0, 0, false, 0)
+        .afterInside(TokenSet.create(PrlTypes.AMO, PrlTypes.EXO), PrlTypes.CC).spacing(0, 0, 0, false, 0)
         .before(PrlTypes.LSQB).spacing(1, 1, 0, false, 0)
         .after(PrlTypes.LSQB).spacing(0, 0, 0, true, 0)
 
@@ -120,8 +141,20 @@ fun prlSpacingBuilder(prlCodeStyleSettings: PrlCodeStyleSettings): SpacingBuilde
         .before(PrlTypes.RBRA).spacing(0, 0, 1, true, 0)
         .after(PrlTypes.RBRA).spacing(0, 0, 1, true, 2)
 
+        .after(PrlTypes.LPAR).spacing(0, 0, 0, true, 0)
+        .before(PrlTypes.RPAR).spacing(0, 0, 0, true, 0)
+
+        .after(TokenSet.create(PrlTypes.ID, PrlTypes.DESCRIPTION)).spacing(1, 1, 0, false, 0)
+        .afterInside(PrlTypes.PROPERTY_REF, PrlTypes.PROPERTY).spacing(1, 1, 0, false, 0)
+        .afterInside(PrlTypes.PROPERTY_REF, PrlTypes.PROPERTY).spacing(1, 1, 0, false, 0)
+
         .before(TokenSet.create(PrlTypes.PROPERTY, RULE_BODY_CONTENT, FEATURE_BODY_CONTENT)).spacing(0, 0, 1, true, 1)
         .after(TokenSet.create(PrlTypes.PROPERTY, RULE_BODY_CONTENT, FEATURE_BODY_CONTENT)).spacing(0, 0, 1, true, 1)
+
+        .after(PrlTypes.FEATURE_DEF).spacing(1, 1, 0, false, 0)
+
+        .before(PrlTokenSets.KEYWORDS).spacing(1, 1, 0, true, 1)
+        .after(PrlTokenSets.KEYWORDS).spacing(1, 1, 0, true, 1)
 
 
 class PrlCodeStyleSettings(container: CodeStyleSettings) : CustomCodeStyleSettings(PrlLanguage.id, container)

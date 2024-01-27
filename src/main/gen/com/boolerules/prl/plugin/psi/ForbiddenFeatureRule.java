@@ -13,4 +13,7 @@ public interface ForbiddenFeatureRule extends PsiElement {
   @Nullable
   FeatureRestriction getFeatureRestriction();
 
+  @Nullable
+  FeatureVersionRestriction getFeatureVersionRestriction();
+
 }

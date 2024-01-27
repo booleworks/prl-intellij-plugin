@@ -30,6 +30,7 @@ public interface PrlTypes {
   IElementType FEATURE_LIST = new PrlElementType("FEATURE_LIST");
   IElementType FEATURE_REF = new PrlElementType("FEATURE_REF");
   IElementType FEATURE_RESTRICTION = new PrlElementType("FEATURE_RESTRICTION");
+  IElementType FEATURE_VERSION_RESTRICTION = new PrlElementType("FEATURE_VERSION_RESTRICTION");
   IElementType FORBIDDEN_FEATURE_RULE = new PrlElementType("FORBIDDEN_FEATURE_RULE");
   IElementType GROUP_DEFINITION = new PrlElementType("GROUP_DEFINITION");
   IElementType HEADER_CONTENT = new PrlElementType("HEADER_CONTENT");
@@ -202,6 +203,9 @@ public interface PrlTypes {
       }
       else if (type == FEATURE_RESTRICTION) {
         return new FeatureRestrictionImpl(node);
+      }
+      else if (type == FEATURE_VERSION_RESTRICTION) {
+        return new FeatureVersionRestrictionImpl(node);
       }
       else if (type == FORBIDDEN_FEATURE_RULE) {
         return new ForbiddenFeatureRuleImpl(node);

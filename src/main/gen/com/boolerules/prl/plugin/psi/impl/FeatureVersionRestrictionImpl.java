@@ -11,15 +11,15 @@ import static com.boolerules.prl.plugin.psi.PrlTypes.*;
 import com.boolerules.prl.plugin.psi.PrlASTWrapperPsiElement;
 import com.boolerules.prl.plugin.psi.*;
 
-public class MandatoryFeatureRuleImpl extends PrlASTWrapperPsiElement implements MandatoryFeatureRule {
+public class FeatureVersionRestrictionImpl extends PrlASTWrapperPsiElement implements FeatureVersionRestriction {
 
-  public MandatoryFeatureRuleImpl(@NotNull ASTNode node) {
+  public FeatureVersionRestrictionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
   public void accept(@NotNull Visitor visitor) {
-    visitor.visitMandatoryFeatureRule(this);
+    visitor.visitFeatureVersionRestriction(this);
   }
 
   @Override
@@ -30,20 +30,8 @@ public class MandatoryFeatureRuleImpl extends PrlASTWrapperPsiElement implements
 
   @Override
   @Nullable
-  public FeatureRef getFeatureRef() {
-    return findChildByClass(FeatureRef.class);
-  }
-
-  @Override
-  @Nullable
-  public FeatureRestriction getFeatureRestriction() {
-    return findChildByClass(FeatureRestriction.class);
-  }
-
-  @Override
-  @Nullable
-  public FeatureVersionRestriction getFeatureVersionRestriction() {
-    return findChildByClass(FeatureVersionRestriction.class);
+  public Num getNum() {
+    return findChildByClass(Num.class);
   }
 
 }

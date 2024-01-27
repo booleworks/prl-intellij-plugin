@@ -30,12 +30,6 @@ public class FeatureRestrictionImpl extends PrlASTWrapperPsiElement implements F
 
   @Override
   @Nullable
-  public Num getNum() {
-    return findChildByClass(Num.class);
-  }
-
-  @Override
-  @Nullable
   public PosNegNumber getPosNegNumber() {
     return findChildByClass(PosNegNumber.class);
   }

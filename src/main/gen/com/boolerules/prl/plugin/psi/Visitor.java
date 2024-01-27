@@ -98,6 +98,10 @@ public class Visitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitFeatureVersionRestriction(@NotNull FeatureVersionRestriction o) {
+    visitPsiElement(o);
+  }
+
   public void visitForbiddenFeatureRule(@NotNull ForbiddenFeatureRule o) {
     visitPsiElement(o);
   }

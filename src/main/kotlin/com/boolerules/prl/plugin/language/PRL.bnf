@@ -164,16 +164,20 @@ private isDefRule ::= featureRef IS constraint {
 
 private forbiddenOrMandatoryFeatureRule ::= forbiddenFeatureRule | mandatoryFeatureRule
 
-forbiddenFeatureRule ::= FORBIDDEN FEAT featureRef featureRestriction? {
+forbiddenFeatureRule ::= FORBIDDEN FEAT featureRef (featureRestriction | featureVersionRestriction)? {
   pin = 1
 }
 
-mandatoryFeatureRule ::= MANDATORY FEAT featureRef featureRestriction? {
+mandatoryFeatureRule ::= MANDATORY FEAT featureRef (featureRestriction | featureVersionRestriction)? {
   pin = 1
 }
 
-featureRestriction ::= LSQB EQ num RSQB | EQ (posNegNumber | quotedString) {
-  pin(".*") = 1
+featureRestriction ::= EQ (posNegNumber | quotedString) {
+  pin = 1
+}
+
+featureVersionRestriction ::= LSQB EQ num RSQB {
+  pin = 1
 }
 
 ruleBody ::= ruleBodyContent* {
